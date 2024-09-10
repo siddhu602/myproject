@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone repo from git hub') {
+            steps {
+                echo 'script from git hub'
+				git branch: 'main', url: 'https://github.com/siddhu602/myproject.git'
+            }
+        }
+		stage('Build code with maven') {
+            steps {
+                echo 'code build'
+				sh 'mvn clean install'
+            }
+        }
+		stage('deploy to tomcat') {
+            steps {
+                echo 'deploying artifact to tomcat'
+				deploy adapters: [tomcat9(credentialsId: 'siddhu', path: '', url: 'http://54.85.5.168:8081/')], contextPath: 'Skoda-App', war: '**/*.war'
+            }
+        }
+    }
+}
